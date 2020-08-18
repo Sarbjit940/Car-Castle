@@ -22,7 +22,7 @@ commonController.updateTable = function(updateObject, tableName, id, whereColumn
     });
 }
 
-CommonController.insertInDB = function(data, tableName){
+commonController.insertInDB = function(data, tableName){
     return new Promise( async function(resolve, reject) {
         try{
          let query = `INSERT INTO ${tableName} `;
@@ -37,7 +37,7 @@ CommonController.insertInDB = function(data, tableName){
           }
          }
         query += '(`'+columnValue.join("`, `")+'`) VALUES ('+symboleValue.join(", ")+')';
-        let result = await masterExecutePromisified(query,valueArray); 
+        let result = await queryExecutePromissified(query,valueArray); 
           resolve((result.insertId||0));
         }catch(e){
           reject(e);
