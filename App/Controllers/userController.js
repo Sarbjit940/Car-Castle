@@ -84,7 +84,7 @@ userController.complete_ride = async (req, res) => {
             if (userCab) {
               if (userCab.isBooked) {
                 userCab.isBooked = false;
-                var distance = getDistance(userCab.location, location);
+                var distance = await getDistance(userCab.location, location);
                 userCab.location = location;
                 responseController.sendDriverSuccessResponse(req, res, ["Ride completed!"], distance);
               } else {
