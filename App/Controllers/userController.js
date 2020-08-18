@@ -53,6 +53,11 @@ userController.user_history = async (req, res) => {
     if(!req || !req.params || !req.params.user_id || !isNaN(req.params.id)) {
         return responseController.sendDriverErrorResponse(req, res, ['User id not found']);
     }
+    //pagination for ride listing api 
+    let limit = req.query && parseInt(req.query.limit);
+    let page = req.query && parseInt(req.query.page);
+    let offset = (page - 1) * limit;
+
     let userRideHistory = await commonController.findInDb({'id': req.params.user_id}, 'users', ['*']);
     if(!userRideHistory) {
         return responseController.sendDriverSuccessResponse(req, res, ['No data found']);
