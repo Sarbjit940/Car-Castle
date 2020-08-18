@@ -40,6 +40,7 @@ userController.cab_booking = async (req, res) => {
         cab.distance['driver_mobile'] = driverDetails['driver_mobile'];
         cab.distance['colour'] =   req.body.colour;
         cab.distance['is_booked'] =   1;
+        cab.distance['booked_date_time'] = moment().format('YYYY-DD-MM, H:mm:ss');
 
         return responseController.sendDriverSuccessResponse(req, res, ['Cab succesfully booked'], cab.distance);
     } catch (error) {
