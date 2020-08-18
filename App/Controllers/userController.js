@@ -1,5 +1,7 @@
 const commonController = require('../Controllers/commonController');
 const responseController = require('../Middleware/response');
+const moment = require('moment');
+
 let userController = {};
 
 
@@ -30,7 +32,8 @@ userController.cab_booking = async (req, res) => {
             "user_name": req.body.user_name,
             "driver_name": driverDetails['driver_name'],
             "is_booked" : 1,
-            "cab_no": cab.distance.cab_no
+            "cab_no": cab.distance.cab_no,
+            "booked_at": moment().format('YYYY-DD-MM, H:mm:ss')
         }
         await commonController.insertInDB(insertObj, 'users');
         cab.distance['driver_name'] = driverDetails['driver_name'];
@@ -47,7 +50,7 @@ userController.cab_booking = async (req, res) => {
 
 userController.user_history = async (req, res) => {
   try {
-    if(!req || !req.params || !req.params.user_id) {
+    if(!req || !req.params || !req.params.user_id || !isNaN(req.params.id)) {
         return responseController.sendDriverErrorResponse(req, res, ['User id not found']);
     }
     let userRideHistory = await commonController.findInDb({'id': req.params.user_id}, 'users', ['*']);
@@ -61,6 +64,52 @@ userController.user_history = async (req, res) => {
   }
 }
 
+userController.complete_ride = async (req, res) => {
+    try {
+    if (req.params.cab_id && !isNaN(req.params.cab_id) && req.query.lattitude && req.query.longitude && !isNaN(req.query.lattitude) && !isNaN(req.query.longitude)) {
+            var cabID = parseInt(req.params.cab_id);
+            var lattitude = parseInt(req.query.lattitude);
+            var longitude = parseInt(req.query.longitude);
+            var location = {
+              lattitude: lattitude,
+              longitude: longitude
+            };
+            var userCab = null;
+          let cabs =  await commonController.findInDb({'id' : req.params.cab_id}, 'cabs', ['*']);
+            cabs.forEach(function(cab) {
+              if (cabID === cab.id) {
+                userCab = cab;
+              }
+            });
+            if (userCab) {
+              if (userCab.isBooked) {
+                userCab.isBooked = false;
+                var distance = getDistance(userCab.location, location);
+                userCab.location = location;
+                res.json({
+                  message: "Ride completed!",
+                  distance: distance
+                })
+              } else {
+                res.json({
+                  message: "Can't complete ride for a cab which is not booked!"
+                });
+              }
+            } else {
+              res.json({
+                message: "Could not find cab with id " + cabID
+              });
+            }
+          } else {
+            res.json({
+              message: "Invalid/Missing parameters"
+            });
+          }
+    } catch (error) {
+        console.error("UserController complete ride  Error =========>", error);
+        return responseController.sendDriverErrorResponse(req, res, error); 
+    }
+}
 module.exports = userController;
 
 var getClosestCab = function (location, color) {
