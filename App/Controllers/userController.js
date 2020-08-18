@@ -86,24 +86,15 @@ userController.complete_ride = async (req, res) => {
                 userCab.isBooked = false;
                 var distance = getDistance(userCab.location, location);
                 userCab.location = location;
-                res.json({
-                  message: "Ride completed!",
-                  distance: distance
-                })
+                responseController.sendDriverSuccessResponse(req, res, ["Ride completed!"], distance);
               } else {
-                res.json({
-                  message: "Can't complete ride for a cab which is not booked!"
-                });
+                  responseController.sendDriverErrorResponse(req, res, ["Can't complete ride for a cab which is not booked!"]);
               }
             } else {
-              res.json({
-                message: "Could not find cab with id " + cabID
-              });
+                responseController.sendDriverErrorResponse(req, res, ["Could not find cab with id" + cabID])
             }
           } else {
-            res.json({
-              message: "Invalid/Missing parameters"
-            });
+              responseController.sendDriverErrorResponse(req, res, ["Invalid/Missing parameters"]);
           }
     } catch (error) {
         console.error("UserController complete ride  Error =========>", error);
