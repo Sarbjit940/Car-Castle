@@ -4,7 +4,7 @@ const moment = require('moment');
 
 let userController = {};
 
-
+//booking car
 userController.cab_booking = async (req, res) => {
     try {
         let commonCheck = commonController.validateReqBody(req, ['user_name', 'is_booked', 'lattitude', 'longitude', 'colour'], 'body');
@@ -107,7 +107,7 @@ userController.complete_ride = async (req, res) => {
     }
 }
 module.exports = userController;
-
+//get the closest cab
 var getClosestCab = function (location, color) {
     return new Promise( async (resolve, reject) => {
         try {
@@ -135,7 +135,7 @@ var getClosestCab = function (location, color) {
         }
     }); 
 }
-
+//get smallest distance
  var  getDistance =  function (cab_location_lattitude, actual_location, cab_location_longitude) {
     return new Promise( (resolve, reject) => {
         try {
