@@ -45,6 +45,22 @@ userController.cab_booking = async (req, res) => {
     }
 }
 
+userController.user_history = async (req, res) => {
+  try {
+    if(!req || !req.params || !req.params.user_id) {
+        return responseController.sendDriverErrorResponse(req, res, ['User id not found']);
+    }
+    let userRideHistory = await commonController.findInDb({'id': req.params.user_id}, 'users', ['*']);
+    if(!userRideHistory) {
+        return responseController.sendDriverSuccessResponse(req, res, ['No data found']);
+    }
+    return responseController.sendDriverSuccessResponse(req, res, ['User ride history successfully fetched'], userRideHistory);
+  } catch (error) {
+    console.error("UserController User booking history Error =========>", error);
+    return responseController.sendDriverErrorResponse(req, res, error);  
+  }
+}
+
 module.exports = userController;
 
 var getClosestCab = function (location, color) {

@@ -7,6 +7,8 @@ const authController =  require('../Middleware/auth')
 const userController = require('../Controllers/userController');
 
 
+//api's
 router.post('/book', authController.apiAuth, userController.cab_booking);
+router.get('/userHistory/:user_id', authController.authTokken, userController.user_history);
 
 module.exports = router;
